@@ -3,6 +3,7 @@ from flask import Flask
 import thread
 
 import com.ucloudlink.spider.AwsSpiderKeyWord as AwsSpiderKeyWord
+import com.ucloudlink.spider.AwsSpiderkeyWordStatistics as AwsSpiderkeyWordStatistics
 
 app = Flask(__name__, static_folder='.', static_url_path='')
 
@@ -21,5 +22,6 @@ def echo(keyword,count):
 
 def SpiderWord(keyword,pagecount):
     AwsSpiderKeyWord.SpiderByKeyWord(keyword, pagecount)
+    AwsSpiderkeyWordStatistics.statisKeyWord(keyword)
 
 app.run(port=9999, debug=True)

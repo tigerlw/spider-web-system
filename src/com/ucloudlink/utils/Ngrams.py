@@ -4,6 +4,8 @@ import re
 import string
 import collections
 
+
+
 def cleanSentence(sentence):
     sentence = sentence.split(' ')
     sentence = [word.strip(string.punctuation + string.whitespace) for word in sentence]
@@ -12,6 +14,8 @@ def cleanSentence(sentence):
 
 def cleanInput(content):
     content = content.upper()
+    content = content.decode('utf-8')
+
     #content = re.sub('\\n|[[\\d+\\]]', ' ', content)
     #content = bytes(content, "UTF-8")
     #content = content.decode("ascii", "ignore")

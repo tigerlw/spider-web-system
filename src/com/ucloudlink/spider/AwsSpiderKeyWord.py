@@ -61,11 +61,14 @@ def SpiderByKeyWord(keyword,pagecount):
             tagA = item.find("a",
                              {"class": "a-link-normal s-access-detail-page s-color-twister-title-link a-text-normal"})
 
+            if tagA == None:
+                continue
+
             title = tagA.attrs["title"]
 
-            tmpOutput = Ngrams.getNgrams(title, 4)
+            # tmpOutput = Ngrams.getNgrams(title, 4)
 
-            output.extend(tmpOutput)
+            # output.extend(tmpOutput)
 
             print  title
 

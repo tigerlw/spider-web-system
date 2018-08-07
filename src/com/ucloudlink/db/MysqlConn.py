@@ -65,8 +65,10 @@ def insertStatis(statis):
     cursor = db.cursor()
 
     for item in statis:
+        # print(item.word)
         sql = "insert into aws_collection_statis(word,frequency,num,keyword) values ('%s','%d','%d','%s')" % \
               (item.word, item.frequency, item.num,item.keyword)
+
 
         try:
             cursor.execute(sql)
@@ -75,6 +77,20 @@ def insertStatis(statis):
             db.rollback()
 
     db.close()
+
+
+def deleteStatis(keyword):
+    db = MySQLdb.connect("localhost", "root", "123456", "ocs_test", charset='utf8')
+    cursor = db.cursor()
+
+    sql = "delete from aws_collection_statis where keyword='%s'" % (keyword)
+
+    try:
+        cursor.execute(sql)
+        db.commit()
+    except:
+        db.rollback()
+
 
 def insertDesc(desc):
     db = MySQLdb.connect("localhost", "root", "123456", "ocs_test", charset='utf8')

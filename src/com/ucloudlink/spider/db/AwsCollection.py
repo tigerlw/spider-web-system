@@ -24,6 +24,7 @@ class StatisItem:
         self.keyword = keyword
 
 class DescItem:
-    def  __init__(self,id,content):
+    def  __init__(self,id,content,keyword):
         self.id = id
         self.content = content
+        self.keyword = keyword

@@ -2,7 +2,9 @@
 # -*- coding: UTF-8 -*-
 
 import MySQLdb
-from com.ucloudlink.spider.AwsCollection import AwsCollection
+import sys
+#sys.path.append("..")
+from AwsCollection import AwsCollection
 
 
 def insertCollection(items):
@@ -31,6 +33,8 @@ def deleteCollection(keyword):
         db.commit()
     except:
         db.rollback()
+
+    db.close()
 
 
 def queryCollection(keyword):
@@ -91,14 +95,16 @@ def deleteStatis(keyword):
     except:
         db.rollback()
 
+    db.close()
+
 
 def insertDesc(desc):
     db = MySQLdb.connect("localhost", "root", "123456", "ocs_test", charset='utf8')
     cursor = db.cursor()
 
     for item in desc:
-        sql = "insert into aws_collection_content(id,content) values ('%s','%s')" % \
-              (item.id, item.content)
+        sql = "insert into aws_collection_content(id,content,keyword) values ('%s','%s','%s')" % \
+              (item.id, item.content,item.keyword)
 
         try:
             cursor.execute(sql)
@@ -107,4 +113,19 @@ def insertDesc(desc):
             db.rollback()
 
     db.close()
+
+def deleteDesc(keyword):
+    db = MySQLdb.connect("localhost", "root", "123456", "ocs_test", charset='utf8')
+    cursor = db.cursor()
+
+    sql = "delete from aws_collection_content where keyword=" % (keyword)
+
+    try:
+        cursor.execute(sql)
+        db.commit()
+    except:
+        db.rollback()
+
+    db.close()
+
 

@@ -2,14 +2,21 @@ import requests
 import lxml
 import re
 from bs4 import BeautifulSoup
-import com.ucloudlink.utils.Ngrams as Ngrams
-from collections import OrderedDict
-import collections
-from AwsCollection import AwsCollection
-import com.ucloudlink.db.MysqlConn as MysqlConn
+
+import sys
+#sys.path.append("..")
+
+from db.AwsCollection import AwsCollection
+import db.MysqlConn as MysqlConn
+import utils.Logger as Logger
+
+logger = Logger.Logger("AwsSpiderKeyWord")
 
 
-def SpiderByKeyWord(keyword,pagecount):
+def SpiderByKeyWord(keyword,pagecount,seqid):
+
+    logger.info("seqid:"+seqid+" Begin get sale list page;keyword:"+keyword+" pageSize:"+str(pagecount))
+
     output = []
 
     awsCollection = []
@@ -35,7 +42,8 @@ def SpiderByKeyWord(keyword,pagecount):
 
     while count < pagecount:
 
-        print "page:" + str(count)
+        # print "page:" + str(count)
+
 
         soup = BeautifulSoup(html, 'lxml')
 
@@ -53,7 +61,8 @@ def SpiderByKeyWord(keyword,pagecount):
             if div == None:
                 div = item.find("div", {"class": "a-row a-spacing-none sx-line-clamp-4"})
 
-            print item.attrs["id"]
+            #print item.attrs["id"]
+            logger.info("seqid:" + seqid + " sale id:" + item.attrs["id"])
 
             # if div == None:
             # continue
@@ -70,7 +79,8 @@ def SpiderByKeyWord(keyword,pagecount):
 
             # output.extend(tmpOutput)
 
-            print  title
+            # print  title
+            logger.info("seqid:"+seqid+" sale title:"+title)
 
             itemUrl = tagA.attrs["href"]
 
@@ -92,7 +102,8 @@ def SpiderByKeyWord(keyword,pagecount):
             if itemUrl.find(rootUrl) < 0:
                 itemUrl = rootUrl + tagA.attrs["href"]
 
-            print  itemUrl
+            #print  itemUrl
+            logger.info("seqid:"+seqid+" sale itemUrl:"+itemUrl)
             comments = item.findAll("a", {"class": "a-size-small a-link-normal a-text-normal"})
 
             commentCount = '0'
@@ -102,8 +113,8 @@ def SpiderByKeyWord(keyword,pagecount):
                     commentCount = commentItem.get_text().replace(',', '')
                     break
 
-            print commentCount
-
+            #print commentCount
+            logger.info("seqid:"+seqid+" sale commentCount:" + commentCount )
             starts = item.findAll("span", {"class": "a-icon-alt"})
 
             for startItem in starts:
@@ -111,7 +122,8 @@ def SpiderByKeyWord(keyword,pagecount):
                 if score.find('stars') > 0:
                     break
 
-            print score
+            #print score
+            logger.info("seqid:"+seqid+" sale score:" + score )
 
             collecion = AwsCollection(itemId, title, itemUrl, int(commentCount), score, count, indexSeq, itemType,
                                       keyword)
@@ -127,7 +139,8 @@ def SpiderByKeyWord(keyword,pagecount):
         nextPage = session.get(pageUrl, headers=headers)
         html = nextPage.content
         count = count + 1
-        print("finish page:" + str(count))
+        #print("finish page:" + str(count))
+        logger.info("seqid:"+seqid+" finish page " + str(count) )
 
 
     # ngrams = OrderedDict(sorted(output.items(), key=lambda t: t[1], reverse=True))
@@ -135,4 +148,5 @@ def SpiderByKeyWord(keyword,pagecount):
     MysqlConn.deleteCollection(keyword)
     MysqlConn.insertCollection(awsCollection)
 
-    print("finish spider by keyword:"+keyword)
+    # print("finish spider by keyword:"+keyword)
+    logger.info("seqid:"+seqid+" End get sale list page;keyword:" + keyword + " pageSize:" + str(pagecount))
